@@ -1,4 +1,4 @@
-module AST(toProgram) where
+module AST(Program, Class(..), Local, Method(..), Exp(..), toProgram) where
 
 import Terms
 
