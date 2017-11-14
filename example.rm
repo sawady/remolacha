@@ -1,0 +1,23 @@
+class Contador
+    local valor
+
+    def inicializar(valorInicial)
+        set valor = valorInicial
+
+    def incrementar()
+        self.incrementarEn(1)
+
+    def incrementarEn(x)
+        set valor = valor.add(x)
+
+    def valorActual()
+        valor
+
+class Main
+    local c
+
+    def main()
+        set c = new Contador.inicializar(0)
+        c.incrementar().valorActual().print() /* 1 */
+        c.incrementar().valorActual().print() /* 2 */
+        c.incrementarEn(10).valorActual().print() /* 12 */
