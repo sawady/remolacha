@@ -3,4 +3,4 @@ module Main where
 import Compiler
 
 main :: IO ()
-main = compile2
+main = compile

@@ -1,6 +1,7 @@
 module Compiler where
 
 import AST
+import Validations
 import Generator
 import qualified Data.Map.Strict as M
 import qualified Data.Set as S
@@ -103,26 +104,8 @@ classesTable classes =
         (zip (primitiveClasses ++ (collectClasses classes)) [0..])
 
 collectSelectorsSet :: Program -> S.Set String
-collectSelectorsSet classes  
-    | checkForError classes = error "Some error occurs"
-    | otherwise = foldr (\x s -> S.insert x s) S.empty $ concat $ map collectOnClasses classes
+collectSelectorsSet classes  = foldr (\x s -> S.insert x s) S.empty $ concat $ map collectOnClasses classes
       where collectOnClasses (Class _ _ methods) = collectMethods methods
-
-checkForError classes 
-    | (hasDupl $ getClass classes)                   = error "duplicate class"
-    | (any hasDupl $ getLocals classes)              = error "duplicate variable name"
-    | (any hasDupl $ getMethods classes)             = error "duplicate method"
-    | otherwise                                      = error "undefined error"
-
-
-hasDupl ls   = not $ allDifferent ls
-allDifferent :: Eq a => [a] -> Bool
-allDifferent []       = True
-allDifferent (x:xs)   = x `notElem` xs && allDifferent xs
-getClass   = map (\(Class name locals methods) -> name)
-getLocals  = map (\(Class name locals methods) -> locals)
-getMethods = map (\(Class name locals methods) -> map getName methods)
-getName (Method name params _) = (name, length params)
 
 collectMethods :: [Method] -> [String]
 collectMethods methods = map collectMethod methods
@@ -136,27 +119,10 @@ selectorsTable classes =
           M.empty
           (zip (primitiveSelectors ++ S.elems (collectSelectorsSet classes)) [0..])
 
-fst (a,_,_) = a
-snd (_,b,_) = b
-thd (_,_,c) = c
-
-type File = String 
-
 compile :: IO ()
 compile = do
     grammar <- readFile "remolacha.ll"
     input   <- readFile "example.rm"
-    let program = toProgram $ parseTermino grammar input
-    let sTable = selectorsTable program 
-    mapM_ print $ M.assocs sTable
-    mapM_ print $ M.assocs (classesTable program)
-    putStrLn ""
-    putStrLn $ compileWith (classesTable program)
-
-compile2 :: IO ()
-compile2 = do
-    grammar <- readFile "remolacha.ll"
-    input   <- readFile "test1.rm"
     let program = toProgram $ parseTermino grammar input
     let sTable = selectorsTable program 
     mapM_ print $ M.assocs sTable
