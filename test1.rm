@@ -10,10 +10,13 @@ class Contador
     def incrementarEn(x)
         set valor = valor.add(x)
 
+    def incrementarEn(y)
+        set valor = valor.add(x)
+
     def valorActual()
         valor
 
-class Contador
+class Contador2
 
 class Main
     local c

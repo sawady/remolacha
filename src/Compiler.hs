@@ -104,12 +104,25 @@ classesTable classes =
 
 collectSelectorsSet :: Program -> S.Set String
 collectSelectorsSet classes  
-    | hasDuplClass classes = error "duplicate class"
+    | checkForError classes = error "Some error occurs"
     | otherwise = foldr (\x s -> S.insert x s) S.empty $ concat $ map collectOnClasses classes
       where collectOnClasses (Class _ _ methods) = collectMethods methods
-            hasDuplClass classes = not $ allDifferent (map (\(Class s _ _) -> s) classes)
-            allDifferent []      = True
-            allDifferent (x:xs)  = x `notElem` xs && allDifferent xs
+
+checkForError classes 
+    | (hasDupl $ getClass classes)                   = error "duplicate class"
+    | (any hasDupl $ getLocals classes)              = error "duplicate variable name"
+    | (any hasDupl $ getMethods classes)             = error "duplicate method"
+    | otherwise                                      = error "undefined error"
+
+
+hasDupl ls   = not $ allDifferent ls
+allDifferent :: Eq a => [a] -> Bool
+allDifferent []       = True
+allDifferent (x:xs)   = x `notElem` xs && allDifferent xs
+getClass   = map (\(Class name locals methods) -> name)
+getLocals  = map (\(Class name locals methods) -> locals)
+getMethods = map (\(Class name locals methods) -> map getName methods)
+getName (Method name params _) = (name, length params)
 
 collectMethods :: [Method] -> [String]
 collectMethods methods = map collectMethod methods
@@ -122,6 +135,10 @@ selectorsTable classes =
     foldr (\(s, i) m -> M.insert s ("sel" ++ show i) m)
           M.empty
           (zip (primitiveSelectors ++ S.elems (collectSelectorsSet classes)) [0..])
+
+fst (a,_,_) = a
+snd (_,b,_) = b
+thd (_,_,c) = c
 
 type File = String 
 
