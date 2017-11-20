@@ -1,5 +1,7 @@
 class Contador
     local valor
+    local x
+    local y
 
     def inicializar(valorInicial)
         set valor = valorInicial

@@ -1,6 +1,8 @@
 module Main where
 
 import Compiler
+import Validations
 
 main :: IO ()
-main = compile
+-- main = compile
+main = testValidations

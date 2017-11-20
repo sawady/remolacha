@@ -1,5 +1,6 @@
 module Validations where
 
+import Generator
 import AST
 
 fst (a,_,_) = a
@@ -20,3 +21,10 @@ getClass   = map (\(Class name locals methods) -> name)
 getLocals  = map (\(Class name locals methods) -> locals)
 getMethods = map (\(Class name locals methods) -> map getName methods)
 getName (Method name params _) = (name, length params)
+
+testValidations :: IO ()
+testValidations = do
+    grammar <- readFile "remolacha.ll"
+    input   <- readFile "test1.rm"
+    let program = toProgram $ parseTermino grammar input
+    putStrLn ""

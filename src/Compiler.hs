@@ -11,17 +11,17 @@ type ClassInfo = (String, Int, [MethodInfo])
 type ClassesInfo = M.Map String ClassInfo
 type SelectorsTable = M.Map String String
 
-primitiveClasses :: [ClassInfo]
+primitiveClassesInfo :: [ClassInfo]
 --                  cls0                               cls1
-primitiveClasses = [("Int", 1, ["print/0", "add/1"]), ("String", 1, ["print/0", "add/1"])]
+primitiveClassesInfo = [("Int", 1, ["print/0", "add/1"]), ("String", 1, ["print/0", "add/1"])]
 
 primitiveSelectors :: [String]
 --                    sel0       sel1
 primitiveSelectors = ["print/0", "add/1"]
 
-compileWith :: ClassesInfo -> String
-compileWith classesInfo = unlines $ 
-    compilePrelude ++ compileClasses classesInfo ++ compileMethods classesInfo
+compileWith :: ClassesInfo -> SelectorsTable -> String
+compileWith classesInfo sTable = unlines $ 
+    compilePrelude ++ compileClasses classesInfo ++ compileMethods classesInfo sTable
 
 compilePrelude :: [String]
 compilePrelude = [
@@ -74,9 +74,14 @@ compilePrimitivesClasses = [
     ]
 
 compileClasses :: ClassesInfo -> [String]
-compileClasses m = compileClasses' $ filter (\(c,_) -> not $ elem c primitives) (M.assocs m)
-    where compileClasses' = foldr (\(c1, (c2, n, _)) r -> compileClass c1 c2 n ++ r) []
-          primitives = map (\(c, _, _) -> c) primitiveClasses
+compileClasses = compileClasses' . nonPrimitiveClasses
+    where compileClasses' = M.foldrWithKey' (\c1 (c2, n, _) r -> compileClass c1 c2 n ++ r) []
+
+nonPrimitiveClasses :: M.Map String ClassInfo -> M.Map String ClassInfo
+nonPrimitiveClasses = M.filterWithKey (\c _ -> not $ elem c primitiveClasses)
+
+primitiveClasses :: [String]
+primitiveClasses = map (\(c, _, _) -> c) primitiveClassesInfo
 
 compileClass :: String -> String -> Int -> [String]
 compileClass origCls cls n = [
@@ -91,8 +96,8 @@ compileLocals n =
     ("  obj->varsInstancia = new PTR[" ++ show n ++ "];") : 
         map (\i -> "  obj->varsInstancia[" ++ show i ++ "] = constructor_cls0(0);") [0..n-1]
 
-compileMethods :: ClassesInfo -> [String]
-compileMethods m = undefined
+compileMethods :: ClassesInfo -> SelectorsTable -> [String]
+compileMethods cls sels = undefined
 
 collectClasses :: Program -> [ClassInfo]
 collectClasses classes = map (\(Class n locals methods) -> (n, length locals, collectMethods methods)) classes
@@ -101,7 +106,7 @@ classesTable :: Program -> ClassesInfo
 classesTable classes = 
     foldr (\((s, nlocals, methods), i) m -> M.insert s ("cls" ++ show i, nlocals, methods) m)
         M.empty 
-        (zip (primitiveClasses ++ (collectClasses classes)) [0..])
+        (zip (primitiveClassesInfo ++ (collectClasses classes)) [0..])
 
 collectSelectorsSet :: Program -> S.Set String
 collectSelectorsSet classes  = foldr (\x s -> S.insert x s) S.empty $ concat $ map collectOnClasses classes
@@ -125,7 +130,8 @@ compile = do
     input   <- readFile "example.rm"
     let program = toProgram $ parseTermino grammar input
     let sTable = selectorsTable program 
+    let cTable = classesTable program
     mapM_ print $ M.assocs sTable
-    mapM_ print $ M.assocs (classesTable program)
+    mapM_ print $ M.assocs cTable
     putStrLn ""
-    putStrLn $ compileWith (classesTable program)
+    putStrLn $ compileWith cTable sTable
