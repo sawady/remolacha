@@ -127,7 +127,7 @@ selectorsTable classes =
 compile :: IO ()
 compile = do
     grammar <- readFile "remolacha.ll"
-    input   <- readFile "example.rm"
+    input   <- readFile "test1.rm"
     let program = toProgram $ parseTermino grammar input
     let sTable = selectorsTable program 
     let cTable = classesTable program
