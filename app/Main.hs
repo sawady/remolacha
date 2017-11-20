@@ -4,5 +4,5 @@ import Compiler
 import Validations
 
 main :: IO ()
--- main = compile
-main = testValidations
+main = compile
+-- main = testValidations

@@ -1,13 +1,14 @@
 class Contador
     local valor
     local x
-    local y
 
-    def test()
-        1
-        "casa"
-        new Auto
+    def test(y)
+        set x = x
+        set y = 1
 
+    def vacio()
+
+/*
     def inicializar(valorInicial)
         set valor = valorInicial
         self.atomico()
@@ -20,6 +21,7 @@ class Contador
 
     def valorActual()
         valor
+*/
 
 class Main
     local c
