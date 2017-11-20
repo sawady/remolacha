@@ -3,10 +3,6 @@ module Validations where
 import Generator
 import AST
 
-fst (a,_,_) = a
-snd (_,b,_) = b
-thd (_,_,c) = c
-
 checkForError classes 
     | (hasDupl $ getClass classes)                          = error "duplicate class"
     | (any hasDupl $ getLocals classes)                     = error "duplicate variable name"

@@ -3,8 +3,14 @@ class Contador
     local x
     local y
 
+    def test()
+        1
+        "casa"
+        new Auto
+
     def inicializar(valorInicial)
         set valor = valorInicial
+        self.atomico()
 
     def incrementar()
         self.incrementarEn(1)
