@@ -20,10 +20,12 @@ allDifferent :: Eq a => [a] -> Bool
 allDifferent []       = True
 allDifferent (x:xs)   = x `notElem` xs && allDifferent xs
 
-getClass   = map (\(Class name locals methods) -> name)
-getLocals  = map (\(Class name locals methods) -> locals)
-getMethods = map (\(Class name locals methods) -> map getName methods)
+getClass         = map (\(Class name locals methods) -> name)
+getLocals        = map (\(Class name locals methods) -> locals)
+getMethods       = map (\(Class name locals methods) -> map getName methods)
+getMethodsParams = map (\(Class name locals methods) -> map getMethodParams methods)
 getName (Method name params _) = (name, length params)
+getMethodParams (Method _ params _) = params 
 
 testValidations :: IO ()
 testValidations = do
