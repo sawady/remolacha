@@ -103,8 +103,13 @@ classesTable classes =
         (zip (primitiveClasses ++ (collectClasses classes)) [0..])
 
 collectSelectorsSet :: Program -> S.Set String
-collectSelectorsSet classes = foldr (\x s -> S.insert x s) S.empty $ concat $ map collectOnClasses classes
-    where collectOnClasses (Class _ _ methods) = collectMethods methods
+collectSelectorsSet classes  
+    | hasDuplClass classes = error "duplicate class"
+    | otherwise = foldr (\x s -> S.insert x s) S.empty $ concat $ map collectOnClasses classes
+      where collectOnClasses (Class _ _ methods) = collectMethods methods
+            hasDuplClass classes = not $ allDifferent (map (\(Class s _ _) -> s) classes)
+            allDifferent []      = True
+            allDifferent (x:xs)  = x `notElem` xs && allDifferent xs
 
 collectMethods :: [Method] -> [String]
 collectMethods methods = map collectMethod methods
@@ -118,10 +123,23 @@ selectorsTable classes =
           M.empty
           (zip (primitiveSelectors ++ S.elems (collectSelectorsSet classes)) [0..])
 
+type File = String 
+
 compile :: IO ()
 compile = do
     grammar <- readFile "remolacha.ll"
     input   <- readFile "example.rm"
+    let program = toProgram $ parseTermino grammar input
+    let sTable = selectorsTable program 
+    mapM_ print $ M.assocs sTable
+    mapM_ print $ M.assocs (classesTable program)
+    putStrLn ""
+    putStrLn $ compileWith (classesTable program)
+
+compile2 :: IO ()
+compile2 = do
+    grammar <- readFile "remolacha.ll"
+    input   <- readFile "test1.rm"
     let program = toProgram $ parseTermino grammar input
     let sTable = selectorsTable program 
     mapM_ print $ M.assocs sTable
