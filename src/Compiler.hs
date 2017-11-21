@@ -42,6 +42,8 @@ compileWith classesInfo sTable = do
 compilePrelude :: Output
 compilePrelude = mapM_ out [
         "#include <iostream>",
+        "#include <stdlib.h>",
+        "",
         "using namespace std;",
         "",
         "typedef unsigned long long int Num;",
@@ -49,7 +51,8 @@ compilePrelude = mapM_ out [
         "typedef void* PTR;",
         "",
         "struct Clase {",
-        "  PTR* metodos ;",
+        "  string nombre;",
+        "  PTR* metodos;",
         "};",
         "",
         "struct Objeto {",
@@ -86,11 +89,12 @@ compileUtils = mapM_ out [
         "  return DEFAULT_VALUE;",
         "}",
         "",
-        "Metodo CALL(Objeto* r, string m, int i) {",
+        "Objeto* CALL(Objeto* r, string m, int i, Objeto* args...) {",
         "  if(r->clase->metodos[i] == NULL) {",
-        "    cout << \"El objeto no acepta el mensaje \" << m << endl;",
+        "    cout << r->clase->nombre << \" no acepta el mensaje \" << m << endl;",
+        "    exit(-1);",
         "  }",
-        "  return PTR_TO_METHOD(r->clase->metodos[i]);",
+        "  return PTR_TO_METHOD(r->clase->metodos[i])(r, args);",
         "}",
         ""
     ]
@@ -263,11 +267,12 @@ compileExp cTable sTable params locals (Assign x e)    =
         Nothing  -> "ASSIGN_LOCAL(o0, " ++ show i ++ ", " ++ compileExp cTable sTable params locals e ++ ")"
         where i = fromJust $ elemIndex x locals
 
-compileExp cTable sTable params locals (Send s ps e) = "CALL(" ++ e' ++ ", " ++ "\"" ++ m ++ "\"" ++ ", " ++ show i ++ ")(" ++ ps' ++ ")"
+compileExp cTable sTable params locals (Send s ps e) = "CALL(" ++ e' ++ ", " ++ "\"" ++ m ++ "\"" ++ ", " ++ show i ++ ", " ++ ps'' ++ ")"
     where m   = s ++ "/" ++ show (length ps)
           i   = fromJust $ elemIndex m (map fst sTable)
           e'  = compileExp cTable sTable params locals e
           ps' = concat $ intersperse ", " $ map (compileExp cTable sTable params locals) ps
+          ps'' = if null ps' then "NULL" else ps'
 
 compileMain :: ClassesInfo -> SelectorsTable -> Output
 compileMain cTable sTable = do
@@ -286,12 +291,13 @@ compileClassInitialization (c, (cls, _, methods)) sTable =
         out $ ""
         out $ "  /* Inicialización de la clase " ++ cls ++ " ( " ++ c ++ " ) */"
         out $ "  " ++ cls ++ " = new Clase;"
+        out $ "  " ++ cls ++ "->nombre = \"" ++ c ++ "\";"
         out $ "  " ++ cls ++ "->metodos = new PTR[" ++ show (length sTable) ++ "];"
         mapM_ compileMethodsForInit (zip [0..] sTable)
 
     where compileMethodsForInit (i, (m, sel)) =
             do  
-                out $ "  " ++ cls ++ "->metodos[" ++ show i ++ "] = " ++ (compileMethodForInit m sel) ++ ";"
+                out $ "  " ++ cls ++ "->metodos[" ++ show i ++ "] = " ++ (compileMethodForInit m sel) ++ "; /* " ++ m ++ " */"
           compileMethodForInit m sel =
             if elem m classMethods
                then "METHOD_TO_PTR(met_" ++ cls ++ "_" ++ sel ++ ")"
@@ -299,7 +305,7 @@ compileClassInitialization (c, (cls, _, methods)) sTable =
           classMethods = map (\(m, ps, _) -> m) methods
 
 compileMainCall :: ClassesInfo -> SelectorsTable -> Output
-compileMainCall cTable sTable = out $ "  CALL(constructor_" ++ cls ++ "(), " ++ "\"main/0\"" ++ ", " ++ show i ++ ")();"
+compileMainCall cTable sTable = out $ "  CALL(constructor_" ++ cls ++ "(), " ++ "\"main/0\"" ++ ", " ++ show i ++ ", NULL);"
     where (cls, _, _) = fromJust $ lookup "Main" cTable
           i = fromJust $ elemIndex "main/0" (map fst sTable)
  

@@ -1,27 +1,19 @@
 class Contador
     local valor
-    local x
 
-    def test(y)
-        set x = x
-        set y = 1
-
-    def vacio()
-
-/*
     def inicializar(valorInicial)
         set valor = valorInicial
-        self.atomico()
+        self
 
     def incrementar()
         self.incrementarEn(1)
 
     def incrementarEn(x)
         set valor = valor.add(x)
+        self
 
     def valorActual()
         valor
-*/
 
 class Main
     local c
