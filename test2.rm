@@ -5,6 +5,6 @@ class Main
     local x
 
     def f(y)
+        set x = 2
         set y = 4
-        set z = 6
-        set m = t
+        set y = x
