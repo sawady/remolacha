@@ -5,13 +5,15 @@ import Generator
 import AST
 
 main :: IO ()
-main = test1
+main = do
+	test "test2.rm" (Left "variable not initialized")
+	test "test1.rm" (Left "instance variable and param name cannot be equals")
 
-test1 :: IO ()
-test1 = hspec $ do
+test :: String -> Either String String -> IO ()
+test path result = hspec $ do
 	describe "basic" $ do
 		it "all ok" $ do
 			grammar <- readFile "remolacha.ll"
-			input   <- readFile "test2.rm"
+			input   <- readFile path
 			let program = toProgram $ parseTermino grammar input
-			checkForError program `shouldBe` Left "variable not initialized"
+			checkForError program `shouldBe` result
