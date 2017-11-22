@@ -1,0 +1,10 @@
+class A
+    local x
+
+class Main
+    local x
+
+    def f(y)
+        set y = 4
+        set z = 6
+        set m = t
