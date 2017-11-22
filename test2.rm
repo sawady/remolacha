@@ -7,4 +7,4 @@ class Main
     def f(y)
         set x = 2
         set y = 4
-        set y = x
+        set z = x

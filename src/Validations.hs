@@ -5,13 +5,13 @@ import Generator
 import AST
 
 checkForError classes 
-    | (hasDupl $ getClass classes)                                              = error "duplicate class"
-    | (any hasDupl $ getLocals classes)                                         = error "duplicate variable name"
-    | (any hasDupl $ getMethods classes)                                        = error "duplicate method"
-    | any id (map (any hasDupl) $ getMethodsParams classes)                     = error "duplicate method param name"
-    | any id (compareOnebyOne (getLocals classes) (getMethodsParams classes))   = error "instance variable and param name cannot be equals"
-    | not $ allClassesInScope classes                                           = error "variable not initialized"
-    | otherwise                                                                 = "All Validations pass"
+    | (hasDupl $ getClass classes)                                              = Left "duplicate class"
+    | (any hasDupl $ getLocals classes)                                         = Left "duplicate variable name"
+    | (any hasDupl $ getMethods classes)                                        = Left "duplicate method"
+    | any id (map (any hasDupl) $ getMethodsParams classes)                     = Left "duplicate method param name"
+    | any id (compareOnebyOne (getLocals classes) (getMethodsParams classes))   = Left "instance variable and param name cannot be equals"
+    | not $ allClassesInScope classes                                           = Left "variable not initialized"
+    | otherwise                                                                 = Right "All Validations pass"
 
 
 hasDupl ls   = not $ allDifferent ls
@@ -43,7 +43,8 @@ collectAssigns (Send _ exprs exp) = collectAssigns exp ++ concat (map collectAss
 collectAssigns _                  = []
 
 --[varName | x@(Assign varName _) <- exps]
-
+getMsg (Left m)  = m
+getMsg (Right m) = m
 
 
 testValidations :: IO ()
@@ -51,4 +52,4 @@ testValidations = do
     grammar <- readFile "remolacha.ll"
     input   <- readFile "test2.rm"
     let program = toProgram $ parseTermino grammar input
-    putStrLn (checkForError program)
+    putStrLn (getMsg $ checkForError program)
