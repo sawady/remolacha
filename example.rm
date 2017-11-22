@@ -1,16 +1,16 @@
 class Contador
     local valor
-    local x
-    local y
 
     def inicializar(valorInicial)
         set valor = valorInicial
+        self
 
     def incrementar()
         self.incrementarEn(1)
 
     def incrementarEn(x)
         set valor = valor.add(x)
+        self
 
     def valorActual()
         valor
