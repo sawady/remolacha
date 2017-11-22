@@ -36,7 +36,7 @@ getMethodParams (Method _ params _) = params
 compareList ls = not . null . intersect ls
 
 allInScope locals methods = all (isInScope locals) methods
-isInScope locals (Method _ variables exps) = compareList (locals ++ variables) (concat $ map collectAssigns exps)
+isInScope locals (Method _ variables exps) = all (`elem` (locals ++ variables)) (concat $ map collectAssigns exps)  
 
 collectAssigns (Assign var exp)   = var : collectAssigns exp
 collectAssigns (Send _ exprs exp) = collectAssigns exp ++ concat (map collectAssigns exprs)
