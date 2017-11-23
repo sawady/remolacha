@@ -350,14 +350,13 @@ collectSelectorsSet classes  = foldr (\x s -> S.insert x s) S.empty $ (concat $ 
 
 -------------------------------------------------------------------------------------------------------------
 
-compile :: IO ()
-compile = do
-    grammar <- readFile "remolacha.ll"
-    input   <- readFile "example.rm"
+compile :: String -> String -> Either String String
+compile grammar input =
     let program = toProgram $ parseTermino grammar input
-    let sTable = selectorsTable program 
-    let cTable = classesTable program
-    -- mapM_ print $ sTable
-    -- mapM_ print $ cTable
-    -- putStrLn ""
-    mapM_ putStrLn $ execWriter $ compileWith cTable sTable
+        check = checkForError program
+        sTable = selectorsTable program 
+        cTable = classesTable program
+    in
+        case check of
+            (Right _) -> Right $ unlines $ execWriter $ compileWith cTable sTable
+            e -> e

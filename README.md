@@ -52,6 +52,12 @@ Los posibles parámetros que puede dar a la aplicación son:
 
 El archivo de salida es opcional, y en caso de ser nulo imprimirá por la salida estándar el resultado de la compilación.
 
+Ejemplo de ejecución del compilador (sin archivo de salida):
+
+```
+stack exec remolacha-exe -- -f="example.rm"
+```
+
 Corriendo los tests de la aplicación
 ------------------------------------
 
