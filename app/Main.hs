@@ -9,6 +9,7 @@ import System.Environment
 import System.Exit
 import System.IO
 import System.Process
+import Data.Either
 
 import Compiler
 
@@ -36,10 +37,18 @@ main = do
     existsGrammar <- doesFileExist (inputFile)
     when (not existsGrammar) (die ("The given input file " ++ (file args) ++ " does not exist"))
 
-    outputFile <- (canonicalizePath (output args))
+    grammar <- readFile "remolacha.ll"
+    input   <- readFile inputFile
 
-    fileContents <- readFile inputFile
+    let compiled = compile grammar input
 
-    putStrLn ""
-
-    -- compile
+    either 
+        (\e -> die ("Compile error: " ++ e))
+        (\r -> 
+            if null (output args)
+                then putStrLn r
+                else do
+                        outputPath <- (canonicalizePath (output args))
+                        writeFile outputPath r
+        )
+        compiled

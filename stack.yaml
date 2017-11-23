@@ -37,10 +37,10 @@ resolver: lts-9.13
 # will not be run. This is useful for tweaking upstream packages.
 packages:
 - .
-- ../lleca
-# - location:
-#    git: https://github.com/sawady/lleca
-#    commit: 4253848d53377bb1c74194b98642cf66825245b0
+# ../lleca
+- location:
+   git: https://github.com/sawady/lleca
+   commit: 4253848d53377bb1c74194b98642cf66825245b0
 
 # Dependency packages to be pulled from upstream that are not in the resolver
 # (e.g., acme-missiles-0.3)
