@@ -3,6 +3,7 @@ import Validations
 import Test.Hspec
 import Generator
 import AST
+import Compiler
 
 main :: IO ()
 main = test
@@ -54,3 +55,14 @@ test = hspec $ do
 
         it "One Punch" $ do
             "Saitama sensei" `shouldBe` "Saitama sensei"
+
+    describe "compilation test" $ do
+        it "basic compilation" $ do
+            grammar   <- readFile "remolacha.ll"
+            input     <- readFile "example.rm"
+            expected  <- readFile "test/input/test_compile.cpp"
+            let program = toProgram $ parseTermino grammar input
+            let (Right r) = compile grammar input
+            r `shouldBe` expected
+
+            
