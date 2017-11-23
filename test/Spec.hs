@@ -8,6 +8,7 @@ main :: IO ()
 main = do
 	test "test2.rm" (Left "variable not initialized")
 	test "test1.rm" (Left "instance variable and param name cannot be equals")
+	test "test3.rm" (Left "not existing class")
 
 test :: String -> Either String String -> IO ()
 test path result = hspec $ do
