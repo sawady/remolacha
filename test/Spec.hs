@@ -45,3 +45,9 @@ test = hspec $ do
             input   <- readFile "test/input/variable_not_initialized.rm"
             let program = toProgram $ parseTermino grammar input
             checkForError program `shouldBe` (Left "variable not initialized")
+
+        it "not existing class" $ do
+            grammar <- readFile "remolacha.ll"
+            input   <- readFile "test/input/not_existing_class.rm"
+            let program = toProgram $ parseTermino grammar input
+            checkForError program `shouldBe` (Left "not existing class")
