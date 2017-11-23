@@ -39,3 +39,9 @@ test = hspec $ do
             input   <- readFile "test/input/instance_variable_and_param_name.rm"
             let program = toProgram $ parseTermino grammar input
             checkForError program `shouldBe` (Left "instance variable and param name cannot be equals")
+
+        it "variable not initialized" $ do
+            grammar <- readFile "remolacha.ll"
+            input   <- readFile "test/input/variable_not_initialized.rm"
+            let program = toProgram $ parseTermino grammar input
+            checkForError program `shouldBe` (Left "variable not initialized")
