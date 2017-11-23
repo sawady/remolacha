@@ -39,8 +39,9 @@ packages:
 - .
 # ../lleca
 - location:
-   git: https://github.com/sawady/lleca
-   commit: 4253848d53377bb1c74194b98642cf66825245b0
+      git: https://github.com/sawady/lleca
+      commit: 4253848d53377bb1c74194b98642cf66825245b0
+  extra-dep: true
 
 # Dependency packages to be pulled from upstream that are not in the resolver
 # (e.g., acme-missiles-0.3)
