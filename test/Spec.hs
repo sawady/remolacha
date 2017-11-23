@@ -51,3 +51,6 @@ test = hspec $ do
             input   <- readFile "test/input/all_validation_pass.rm"
             let program = toProgram $ parseTermino grammar input
             checkForError program `shouldBe` (Right "All Validations pass")
+
+        it "One Punch" $ do
+            "Saitama sensei" `shouldBe` "Saitama sensei"
