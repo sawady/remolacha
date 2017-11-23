@@ -1,0 +1,23 @@
+class Contador
+    local valor
+
+    def inicializar(valorInicial)
+        set valor = valorInicial
+
+    def incrementar()
+        self.incrementarEn(1)
+
+    def incrementarEn(x,y,z)
+        set valor = valor.add(x)
+
+    def incrementarEn(a,b,c,valor)
+        set valor = valor.add(x)
+
+    def valorActual()
+        valor
+
+class Main
+    local c
+
+    def main()
+        new Contador

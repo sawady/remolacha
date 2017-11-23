@@ -16,7 +16,6 @@ test = hspec $ do
             let program = toProgram $ parseTermino grammar input
             checkForError program `shouldBe` (Left "duplicate class")
 
-
         it "duplicate variable name" $ do
             grammar <- readFile "remolacha.ll"
             input   <- readFile "test/input/duplicate_variable_name.rm"
@@ -33,4 +32,10 @@ test = hspec $ do
             grammar <- readFile "remolacha.ll"
             input   <- readFile "test/input/duplicate_method_param_name.rm"
             let program = toProgram $ parseTermino grammar input
-            checkForError program `shouldBe` (Left "duplicate method param name")            
+            checkForError program `shouldBe` (Left "duplicate method param name")
+
+        it "instance variable and param name cannot be equals" $ do
+            grammar <- readFile "remolacha.ll"
+            input   <- readFile "test/input/instance_variable_and_param_name.rm"
+            let program = toProgram $ parseTermino grammar input
+            checkForError program `shouldBe` (Left "instance variable and param name cannot be equals")
