@@ -5,16 +5,19 @@ import Generator
 import AST
 
 main :: IO ()
-main = do
-	test "test2.rm" (Left "variable not initialized")
-	test "test1.rm" (Left "instance variable and param name cannot be equals")
-	test "test3.rm" (Left "not existing class")
+main = test
 
-test :: String -> Either String String -> IO ()
-test path result = hspec $ do
-	describe "basic" $ do
-		it "all ok" $ do
+test :: IO ()
+test = hspec $ do
+	describe "validations" $ do
+		it "duplicate class" $ do
 			grammar <- readFile "remolacha.ll"
-			input   <- readFile path
+			input   <- readFile "test/input/duplicate_class.rm"
 			let program = toProgram $ parseTermino grammar input
-			checkForError program `shouldBe` result
+			checkForError program `shouldBe` (Left "duplicate class")
+
+		it "duplicate variable name" $ do
+			grammar <- readFile "remolacha.ll"
+			input   <- readFile "test/input/duplicate_variable_name.rm"
+			let program = toProgram $ parseTermino grammar input
+			checkForError program `shouldBe` (Left "duplicate variable name")
