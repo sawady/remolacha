@@ -46,8 +46,8 @@ test = hspec $ do
             let program = toProgram $ parseTermino grammar input
             checkForError program `shouldBe` (Left "variable not initialized")
 
-        it "not existing class" $ do
+        it "all validations pass" $ do
             grammar <- readFile "remolacha.ll"
-            input   <- readFile "test/input/not_existing_class.rm"
+            input   <- readFile "test/input/all_validation_pass.rm"
             let program = toProgram $ parseTermino grammar input
-            checkForError program `shouldBe` (Left "not existing class")
+            checkForError program `shouldBe` (Right "All Validations pass")

@@ -7,22 +7,18 @@ class Contador
     def incrementar()
         self.incrementarEn(1)
 
-    def incrementarEn(x,y,z)
+    def incrementarEn(x)
         set valor = valor.add(x)
 
     def valorActual()
         valor
 
-class Contador2
-    local valor2
-
-    def f(x,valor2,z)
 
 class Main
     local c
 
     def main()
-        set c = new Contador2.inicializar(0)
+        set c = new Contador.inicializar(0)
         c.incrementar().valorActual().print() /* 1 */
         c.incrementar().valorActual().print() /* 2 */
         c.incrementarEn(10).valorActual().print() /* 12 */
