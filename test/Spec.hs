@@ -22,3 +22,15 @@ test = hspec $ do
             input   <- readFile "test/input/duplicate_variable_name.rm"
             let program = toProgram $ parseTermino grammar input
             checkForError program `shouldBe` (Left "duplicate variable name")
+
+        it "duplicate method" $ do
+            grammar <- readFile "remolacha.ll"
+            input   <- readFile "test/input/duplicate_method.rm"
+            let program = toProgram $ parseTermino grammar input
+            checkForError program `shouldBe` (Left "duplicate method")
+
+        it "duplicate method param name" $ do
+            grammar <- readFile "remolacha.ll"
+            input   <- readFile "test/input/duplicate_method_param_name.rm"
+            let program = toProgram $ parseTermino grammar input
+            checkForError program `shouldBe` (Left "duplicate method param name")            
